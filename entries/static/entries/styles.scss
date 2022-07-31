@@ -18,17 +18,24 @@ body {
         margin-bottom: 1rem;
     }
     
-        button {
+        .menu {
             animation-name: grow;
             animation-duration: 1s;
             animation-fill-mode: forwards;
-            padding: 0.5rem;
-            border: none;
-            text-align: center;
         }
-    
-        button:hover {
-            color:darkorange;
-        }
+
+    button {
+        padding: 0.5rem;
+        border: none;
+        text-align: center;
+    }
+
+    button:hover {
+        color:darkorange;
+    }
+
+    .list_button {
+        margin: 0.2rem;
+    }
 }
 

@@ -9,22 +9,14 @@
     </div>
 
     <div id="form_page" class="pages">
-        <form action="{% url 'add' %}" method="post">
+        <form action="{% url 'add_api' %}" method="post">
             {% csrf_token %}
-            <input name="subject" type="text" placeholder="Subject">
+            <input name="entry" type="text" placeholder="Entry">
             <input type="submit">
         </form>
     </div>
 
-    <div id="list_page" class="pages">
-        <ul>
-            {% for item in list %}
-                <li>{{ item }}</li>
-            {% empty %}
-                <li>No items</li>
-            {% endfor %}
-        </ul>
-    </div>
+    <div id="list_page" class="pages"></div>
 
 {% endblock %}
 

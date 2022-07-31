@@ -16,16 +16,21 @@ body {
 body #nav {
   margin-bottom: 1rem;
 }
-body button {
+body .menu {
   animation-name: grow;
   animation-duration: 1s;
   animation-fill-mode: forwards;
+}
+body button {
   padding: 0.5rem;
   border: none;
   text-align: center;
 }
 body button:hover {
   color: darkorange;
+}
+body .list_button {
+  margin: 0.2rem;
 }
 
 /*# sourceMappingURL=styles.css.map */
