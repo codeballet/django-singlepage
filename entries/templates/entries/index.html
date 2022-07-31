@@ -1,0 +1,33 @@
+{% extends "entries/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+    <div id="nav">
+        <button id="form" class="menu">Form</button>
+        <button id="list" class="menu">List</button>
+    </div>
+
+    <div id="form_page" class="pages">
+        <form action="{% url 'add' %}" method="post">
+            {% csrf_token %}
+            <input name="subject" type="text" placeholder="Subject">
+            <input type="submit">
+        </form>
+    </div>
+
+    <div id="list_page" class="pages">
+        <ul>
+            {% for item in list %}
+                <li>{{ item }}</li>
+            {% empty %}
+                <li>No items</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'entries/index.js' %}"></script>
+{% endblock %}
