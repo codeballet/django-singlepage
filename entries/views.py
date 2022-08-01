@@ -8,7 +8,6 @@ from .models import Entry
 
 # Create your views here.
 def index(request):
-    entries = Entry.objects.all()
     return render(request, "entries/index.html")
 
 #######
@@ -44,11 +43,12 @@ def delete_api(request, id):
 def entries_api(request):
     try:
         entries = Entry.objects.values_list()
+        
+        # turn entries into a dict
         entries_dict = {}
         for entry in entries:
             entries_dict[entry[0]] = entry[1]
 
-        print(f"entries_dict: {entries_dict}")
         return JsonResponse({
             "entries": entries_dict
         }, status=200)

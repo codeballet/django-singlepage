@@ -71,7 +71,6 @@ function showPage(page) {
         .then(data => {
             Object.entries(data.entries).forEach(entry => {
                 const [key, value] = entry;
-                console.log(`${key}: ${value}`);
                 // create and append li and button elements
                 const li = document.createElement('li');
                 const button = document.createElement('button');
@@ -105,14 +104,7 @@ if (current_page === '') {
     history.pushState({page: current_page}, "", current_page);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // get csrf token from cookie
-    const csrftoken = getCookie('csrftoken');
-
-    hidePages();
-    showPage(history.state.page);
-    colorMenu(history.state.page);
-
+function menuButtons() {
     // add event listeners on menu buttons
     document.querySelectorAll('.menu').forEach(button => {
         button.onclick = function () {
@@ -122,6 +114,16 @@ document.addEventListener('DOMContentLoaded', () => {
             colorMenu(page);
         }
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // get csrf token from cookie
+    const csrftoken = getCookie('csrftoken');
+
+    hidePages();
+    showPage(history.state.page);
+    colorMenu(history.state.page);
+    menuButtons();
 
     // add event listeners on list buttons
     document.querySelectorAll('.list_button').forEach(button => {
