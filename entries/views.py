@@ -31,9 +31,12 @@ def delete_api(request, id):
         # delete entry
         entry = Entry.objects.get(pk=id)
         entry.delete()
+        return JsonResponse({
+            "message": f"Entry deleted: {entry.entry}"
+        })
     except:
         return JsonResponse({
-            "Error": "Could not delete entry"
+            "Error": "Failed to delete entry"
         })
 
     # render updated list

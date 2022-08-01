@@ -1,9 +1,54 @@
+///////////////
+// constants //
+///////////////
+
 // default page
 const DEFAULT_PAGE = 'form';
 
-// menu button color variables
+// menu button colors
 const ACTIVE = 'turquoise';
 const INACTIVE = 'gainsboro';
+
+///////////////
+// functions //
+///////////////
+
+// set correct color for navigation menu
+function colorMenu(id) {
+    // reset all menu buttons
+    document.querySelectorAll('.menu').forEach(button => {
+        button.style.background = INACTIVE;
+    });
+    // color clicked menu button
+    document.querySelector(`#${id}`).style.background = ACTIVE;
+}
+
+// add event listeners on delete buttons for list entries
+function deleteButtons(csrftoken) {
+    console.log('inside deleteButtons');
+    buttons = document.querySelectorAll('.list_button');
+    console.log(buttons);
+    for (let i = 0; i < buttons.length; i++) {
+        console.log(buttons[i]);
+        buttons[i].onclick = function () {
+            console.log(`button id ${this.id} clicked`);
+            fetch(`api/delete/${this.id}`, {
+                method: 'DELETE',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(message => {
+                console.log(message)
+                // reload page with refreshed list
+                showPage('list', csrftoken);
+            })
+            .catch(error => {
+                console.log('Error: ', error);
+            });
+        }
+    }
+}
 
 // get csrf token from cookie
 function getCookie(name) {
@@ -22,23 +67,15 @@ function getCookie(name) {
     return cookieValue;
 }
 
+// get the current browser URL
 function getPage() {
-    // get the current browser URL
     const url = window.location.href;
     const url_list = url.split('/');
     const page = url_list[url_list.length - 1];
     return page;
 }
 
-function colorMenu(id) {
-    // reset all menu buttons
-    document.querySelectorAll('.menu').forEach(button => {
-        button.style.background = INACTIVE;
-    });
-    // color clicked menu button
-    document.querySelector(`#${id}`).style.background = ACTIVE;
-}
-
+// hide all pages function
 function hidePages() {
     const pages = document.querySelectorAll('.pages');
     for (let i = 0; i < pages.length; i++) {
@@ -46,9 +83,22 @@ function hidePages() {
     }
 }
 
-function showPage(page) {
+// add event listeners on menu buttons
+function menuButtons() {
+    document.querySelectorAll('.menu').forEach(button => {
+        button.onclick = function () {
+            const page = this.id;
+            history.pushState({page: page}, "", page);
+            showPage(page);
+            colorMenu(page);
+        }
+    });
+}
+
+// show the requested page
+function showPage(page, csrftoken) {
     hidePages();
-    // show requested page
+
     document.querySelector(`#${page}_page`).style.display = 'block';
 
     if (page === 'list') {
@@ -82,6 +132,8 @@ function showPage(page) {
                 document.querySelector('#listing').append(li);
                 document.querySelector(`#entry_${key}`).append(button);
             });
+            // add event listeners to delete buttons
+            deleteButtons(csrftoken);
         })
         .catch(error => {
             console.log("error :", error)
@@ -89,7 +141,11 @@ function showPage(page) {
     }
 }
 
-// when user hits browser back button
+/////////////////////
+// browser actions //
+/////////////////////
+
+// browser back button action
 window.onpopstate = (event) => {
     showPage(event.state.page);
     colorMenu(event.state.page)
@@ -104,42 +160,16 @@ if (current_page === '') {
     history.pushState({page: current_page}, "", current_page);
 }
 
-function menuButtons() {
-    // add event listeners on menu buttons
-    document.querySelectorAll('.menu').forEach(button => {
-        button.onclick = function () {
-            const page = this.id
-            history.pushState({page: page}, "", page);
-            showPage(page);
-            colorMenu(page);
-        }
-    });
-}
+////////////////
+// DOM loaded //
+////////////////
 
 document.addEventListener('DOMContentLoaded', () => {
-    // get csrf token from cookie
+    // get csrf token
     const csrftoken = getCookie('csrftoken');
 
     hidePages();
-    showPage(history.state.page);
+    showPage(history.state.page, csrftoken);
     colorMenu(history.state.page);
     menuButtons();
-
-    // add event listeners on list buttons
-    document.querySelectorAll('.list_button').forEach(button => {
-        button.onclick = function () {
-            fetch(`api/delete/${this.id}`, {
-                method: 'DELETE',
-                headers: {'X-CSRFToken': csrftoken},
-                mode: 'same-origin'
-            })
-            // .then(response => response.json())
-            // .then(message => {
-            //     console.log(message)
-            // })
-            .catch(error => {
-                console.log('Error: ', error);
-            });
-        }
-    });
 })
