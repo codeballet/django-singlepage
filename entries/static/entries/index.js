@@ -24,14 +24,13 @@ function colorMenu(id) {
 }
 
 // add event listeners on delete buttons for list entries
-function deleteButtons(csrftoken) {
-    console.log('inside deleteButtons');
+function deleteButtons() {
+    // get csrf token
+    const csrftoken = getCookie('csrftoken');
+
     buttons = document.querySelectorAll('.list_button');
-    console.log(buttons);
     for (let i = 0; i < buttons.length; i++) {
-        console.log(buttons[i]);
         buttons[i].onclick = function () {
-            console.log(`button id ${this.id} clicked`);
             fetch(`api/delete/${this.id}`, {
                 method: 'DELETE',
                 headers: {'X-CSRFToken': csrftoken},
@@ -41,7 +40,7 @@ function deleteButtons(csrftoken) {
             .then(message => {
                 console.log(message)
                 // reload page with refreshed list
-                showPage('list', csrftoken);
+                showPage('list');
             })
             .catch(error => {
                 console.log('Error: ', error);
@@ -96,7 +95,7 @@ function menuButtons() {
 }
 
 // show the requested page
-function showPage(page, csrftoken) {
+function showPage(page) {
     hidePages();
 
     document.querySelector(`#${page}_page`).style.display = 'block';
@@ -133,7 +132,7 @@ function showPage(page, csrftoken) {
                 document.querySelector(`#entry_${key}`).append(button);
             });
             // add event listeners to delete buttons
-            deleteButtons(csrftoken);
+            deleteButtons();
         })
         .catch(error => {
             console.log("error :", error)
@@ -169,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const csrftoken = getCookie('csrftoken');
 
     hidePages();
-    showPage(history.state.page, csrftoken);
+    showPage(history.state.page);
     colorMenu(history.state.page);
     menuButtons();
 })
