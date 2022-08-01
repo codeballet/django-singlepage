@@ -1,3 +1,5 @@
+$hover: darkorange;
+
 @keyframes grow {
     0% {
         width: 4.5rem;
@@ -8,13 +10,20 @@
     100% {
         width: 4.5rem;
     }
-
 }
+
+%button {
+    padding: 0.5rem;
+    border: none;
+    text-align: center;
+}
+
 body {
     margin: 1rem;
     font-family: Arial, Helvetica, sans-serif;
 
     #nav {
+        display: block;
         margin-bottom: 1rem;
     }
     
@@ -24,18 +33,32 @@ body {
             animation-fill-mode: forwards;
         }
 
-    button {
-        padding: 0.5rem;
-        border: none;
-        text-align: center;
+    #form_name {
+        height: 1.5rem;
     }
 
-    button:hover {
-        color:darkorange;
+    #form_submit {
+        @extend %button;
+    }
+
+    #form_submit:hover {
+        color: $hover;
     }
 
     .list_button {
         margin: 0.2rem;
+    }
+    
+    .pages {
+        display: block;
+    }
+
+    button {
+        @extend %button;
+    }
+
+    button:hover {
+        color: $hover;
     }
 }
 

@@ -9,11 +9,18 @@
     width: 4.5rem;
   }
 }
+body button, body #form_submit {
+  padding: 0.5rem;
+  border: none;
+  text-align: center;
+}
+
 body {
   margin: 1rem;
   font-family: Arial, Helvetica, sans-serif;
 }
 body #nav {
+  display: block;
   margin-bottom: 1rem;
 }
 body .menu {
@@ -21,16 +28,20 @@ body .menu {
   animation-duration: 1s;
   animation-fill-mode: forwards;
 }
-body button {
-  padding: 0.5rem;
-  border: none;
-  text-align: center;
+body #form_name {
+  height: 1.5rem;
 }
-body button:hover {
+body #form_submit:hover {
   color: darkorange;
 }
 body .list_button {
   margin: 0.2rem;
+}
+body .pages {
+  display: block;
+}
+body button:hover {
+  color: darkorange;
 }
 
 /*# sourceMappingURL=styles.css.map */
