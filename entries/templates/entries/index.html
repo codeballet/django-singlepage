@@ -11,7 +11,7 @@
     <div id="form_page" class="pages">
         <form action="{% url 'add_api' %}" method="post">
             {% csrf_token %}
-            <input id="form_name" name="entry" type="text" placeholder="Entry">
+            <input id="form_name" name="entry" type="text" placeholder="Entry" autofocus>
             <input id="form_submit" type="submit">
         </form>
     </div>

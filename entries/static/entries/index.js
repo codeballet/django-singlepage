@@ -94,6 +94,46 @@ function menuButtons() {
     });
 }
 
+// generate the list page
+function createList() {
+    // clear existing list page
+    if (document.querySelector('#listing')) {
+        const parent = document.querySelector('#list_page');
+        const child = document.querySelector('#listing');
+        parent.removeChild(child);
+    }
+    
+    // create ul for entries
+    const ul = document.createElement('ul');
+    ul.id = 'listing'
+    const button = document.createElement('button');
+    document.querySelector('#list_page').append(ul)
+
+    // fetch entries from api
+    fetch('api/entries')
+    .then(response => response.json())
+    .then(data => {
+        Object.entries(data.entries).forEach(entry => {
+            const [key, value] = entry;
+            // create and append li and button elements
+            const li = document.createElement('li');
+            const button = document.createElement('button');
+            li.id = `entry_${key}`
+            li.innerHTML = value;
+            button.id = key;
+            button.className = 'list_button';
+            button.innerHTML = 'Delete';
+            document.querySelector('#listing').append(li);
+            document.querySelector(`#entry_${key}`).append(button);
+        });
+        // add event listeners to delete buttons
+        deleteButtons();
+    })
+    .catch(error => {
+        console.log("error :", error)
+    });
+}
+
 // show the requested page
 function showPage(page) {
     hidePages();
@@ -101,42 +141,7 @@ function showPage(page) {
     document.querySelector(`#${page}_page`).style.display = 'block';
 
     if (page === 'list') {
-        // clear existing list page
-        if (document.querySelector('#listing')) {
-            const parent = document.querySelector('#list_page');
-            const child = document.querySelector('#listing');
-            parent.removeChild(child);
-        }
-        
-        // create ul for entries
-        const ul = document.createElement('ul');
-        ul.id = 'listing'
-        const button = document.createElement('button');
-        document.querySelector('#list_page').append(ul)
-
-        // fetch entries from api
-        fetch('api/entries')
-        .then(response => response.json())
-        .then(data => {
-            Object.entries(data.entries).forEach(entry => {
-                const [key, value] = entry;
-                // create and append li and button elements
-                const li = document.createElement('li');
-                const button = document.createElement('button');
-                li.id = `entry_${key}`
-                li.innerHTML = value;
-                button.id = key;
-                button.className = 'list_button';
-                button.innerHTML = 'Delete';
-                document.querySelector('#listing').append(li);
-                document.querySelector(`#entry_${key}`).append(button);
-            });
-            // add event listeners to delete buttons
-            deleteButtons();
-        })
-        .catch(error => {
-            console.log("error :", error)
-        });
+        createList();
     }
 }
 
@@ -152,7 +157,6 @@ window.onpopstate = (event) => {
 
 // set browser history state to current page or DEFAULT_PAGE
 const current_page = getPage();
-console.log(current_page);
 if (current_page === '') {
     history.pushState({page: DEFAULT_PAGE}, "", DEFAULT_PAGE);
 } else {

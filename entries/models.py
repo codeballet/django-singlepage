@@ -6,3 +6,6 @@ class Entry(models.Model):
 
     def __str__(self):
         return f"{self.id}: {self.entry}"
+
+    def is_valid_entry(self):
+        return self.entry != ''
