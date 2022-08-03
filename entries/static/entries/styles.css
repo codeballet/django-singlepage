@@ -30,6 +30,7 @@ body .menu {
 }
 body #form_name {
   height: 1.5rem;
+  margin-right: 0.3rem;
 }
 body #form_submit:hover {
   color: darkorange;

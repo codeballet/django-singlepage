@@ -94,7 +94,55 @@ function menuButtons() {
     });
 }
 
-// generate the list page
+// show the requested page
+function showPage(page) {
+    hidePages();
+
+    document.querySelector(`#${page}_page`).style.display = 'block';
+
+    if (page === 'list') {
+        createList();
+    } else {
+        createForm();
+    }
+}
+
+///////////
+// Pages //
+///////////
+
+// build the form page
+function createForm() {
+    // clear existing form page
+    if (document.querySelector('#form_entry')) {
+        const parent = document.querySelector('#form_page');
+        const child = document.querySelector('#form_entry');
+        parent.removeChild(child);
+    }
+
+    const form = document.createElement('form');
+    form.id = 'form_entry';
+    form.className = 'pages';
+
+    const input = document.createElement('input');
+    input.id = 'form_name';
+    input.name = 'entry';
+    input.type = 'text';
+    input.placeholder = 'Entry';
+    input.autofocus = true;
+
+    const button = document.createElement('button');
+    button.id = 'form_submit';
+    button.className = 'form_button';
+    button.innerHTML = 'Submit';
+
+    document.querySelector('#form_page').append(form);
+    document.querySelector('#form_entry').append(input);
+    document.querySelector('#form_entry').append(button);
+    document.querySelector('#form_name').focus();
+}
+
+// build the list page
 function createList() {
     // clear existing list page
     if (document.querySelector('#listing')) {
@@ -132,17 +180,6 @@ function createList() {
     .catch(error => {
         console.log("error :", error)
     });
-}
-
-// show the requested page
-function showPage(page) {
-    hidePages();
-
-    document.querySelector(`#${page}_page`).style.display = 'block';
-
-    if (page === 'list') {
-        createList();
-    }
 }
 
 /////////////////////
