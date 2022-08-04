@@ -1,13 +1,12 @@
 import json
-from django.http import HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
-from django.urls import reverse
 
 from .models import Entry
 
 # Create your views here.
 def index(request):
+    """Render index view"""
     return render(request, "entries/index.html")
 
 #######
@@ -15,13 +14,22 @@ def index(request):
 #######
 
 def add_api(request):
+    """Add entry to database"""
     if request.method == "POST":
-        received = request.POST["entry"]
-        new_entry = Entry(entry=received)
-        new_entry.save()
-        return HttpResponseRedirect(reverse("index"))
+        try:
+            data = json.loads(request.body)
+            new_entry = Entry(entry=data["entry"])
+            new_entry.save()
+            return JsonResponse({
+                "message": f"Added '{new_entry}'"
+            })
+        except:
+            return JsonResponse({
+                "error": "Could not save entry to database"
+            })
 
 def delete_api(request, id):
+    """Delete entry from database"""
     if request.method != "DELETE":
         return JsonResponse({
             "error": "DELETE request required"
@@ -39,11 +47,8 @@ def delete_api(request, id):
             "Error": "Failed to delete entry"
         })
 
-    # render updated list
-    entries = Entry.objects.all()
-    return HttpResponseRedirect(reverse("index"))
-
 def entries_api(request):
+    """Aquire all entries"""
     try:
         entries = Entry.objects.values_list()
         

@@ -76,6 +76,7 @@ function onDelete() {
     buttons = document.querySelectorAll('.list_button');
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].onclick = function () {
+            // call delete api
             fetch(`api/delete/${this.id}`, {
                 method: 'DELETE',
                 headers: {'X-CSRFToken': csrftoken},
@@ -84,7 +85,7 @@ function onDelete() {
             .then(response => response.json())
             .then(message => {
                 console.log(message)
-                // reload page with refreshed list
+                // refresh list
                 showPage('list');
             })
             .catch(error => {
@@ -95,24 +96,32 @@ function onDelete() {
 }
 
 // event listener on form submit button
-// not working fully when submitting!!!!
 function onSubmit() {
     // get csrf token
     const csrftoken = getCookie('csrftoken');
 
     // event listener
     document.querySelector('#form_entry').onsubmit = (event) => {
-        // prevent form from submitting
         event.preventDefault();
-
-        const entry = document.querySelector('#form_name').value;
-        console.log(entry);
-
-        document.querySelector('#form_name').value = '';
-
-        // show list page
-        pushPage('list');
-        showPage('list');
+        // call add api
+        fetch('api/add', {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin',
+            body: JSON.stringify({
+                entry: document.querySelector('#form_name').value
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+            // go to list page
+            pushPage('list');
+            showPage('list');
+        })
+        .catch(error => {
+            console.log('error: ', error);
+        });
     }
 }
 
