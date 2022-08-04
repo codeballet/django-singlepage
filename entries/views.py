@@ -15,18 +15,22 @@ def index(request):
 
 def add_api(request):
     """Add entry to database"""
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            new_entry = Entry(entry=data["entry"])
-            new_entry.save()
-            return JsonResponse({
-                "message": f"Added '{new_entry}'"
-            })
-        except:
-            return JsonResponse({
-                "error": "Could not save entry to database"
-            })
+    if request.method != "POST":
+        return JsonResponse({
+            "error": "POST request required"
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+        new_entry = Entry(entry=data["entry"])
+        new_entry.save()
+        return JsonResponse({
+            "message": f"Added '{new_entry}'"
+        }, status=200)
+    except:
+        return JsonResponse({
+            "error": "Could not save entry to database"
+        }, status=500)
 
 def delete_api(request, id):
     """Delete entry from database"""
@@ -41,11 +45,11 @@ def delete_api(request, id):
         entry.delete()
         return JsonResponse({
             "message": f"Entry deleted: {entry.entry}"
-        })
+        }, status=200)
     except:
         return JsonResponse({
             "Error": "Failed to delete entry"
-        })
+        }, status=500)
 
 def entries_api(request):
     """Aquire all entries"""
@@ -63,4 +67,4 @@ def entries_api(request):
     except:
         return JsonResponse({
             "error": 'Could not retreive entries'
-        }, status=404)
+        }, status=500)
