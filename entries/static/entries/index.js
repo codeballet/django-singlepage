@@ -56,19 +56,19 @@ function hidePages() {
     }
 }
 
-// add event listeners on menu buttons
+// event listeners on menu buttons
 function menuButtons() {
     document.querySelectorAll('.menu').forEach(button => {
         button.onclick = function () {
             const page = this.id;
-            history.pushState({page: page}, "", page);
+            pushPage(page);
             showPage(page);
-            colorMenu(page);
+            // colorMenu(page);
         }
     });
 }
 
-// add event listeners on delete buttons for list entries
+// event listeners on delete buttons for list entries
 function onDelete() {
     // get csrf token
     const csrftoken = getCookie('csrftoken');
@@ -94,9 +94,49 @@ function onDelete() {
     }
 }
 
-// show the requested page
+// event listener on form submit button
+// not working fully when submitting!!!!
+function onSubmit() {
+    // get csrf token
+    const csrftoken = getCookie('csrftoken');
+
+    // event listener
+    document.querySelector('#form_entry').onsubmit = (event) => {
+        // prevent form from submitting
+        event.preventDefault();
+
+        const entry = document.querySelector('#form_name').value;
+        console.log(entry);
+
+        document.querySelector('#form_name').value = '';
+
+        // show list page
+        pushPage('list');
+        showPage('list');
+    }
+}
+
+// push new state to browser history
+function pushPage(page) {
+    history.pushState({page: page}, "", page);
+}
+
+// set browser history state to current page or DEFAULT_PAGE
+function setHistory() {
+    const current_page = getPage();
+    if (current_page === '') {
+        pushPage(DEFAULT_PAGE);
+        // history.pushState({page: DEFAULT_PAGE}, "", DEFAULT_PAGE);
+    } else {
+        pushPage(current_page);
+        // history.pushState({page: current_page}, "", current_page);
+    }
+}
+
+// show requested page
 function showPage(page) {
     hidePages();
+    colorMenu(page);
 
     document.querySelector(`#${page}_page`).style.display = 'block';
 
@@ -120,24 +160,43 @@ function createForm() {
         parent.removeChild(child);
     }
 
+    // create form element
     const form = document.createElement('form');
     form.id = 'form_entry';
     form.className = 'pages';
 
+    // text input element in form
     const input = document.createElement('input');
     input.id = 'form_name';
     input.name = 'entry';
     input.type = 'text';
     input.placeholder = 'Entry';
 
+    // submit element in form
     const submit = document.createElement('input');
     submit.id = 'form_submit';
     submit.type = 'submit';
 
+    // append elements to page
     document.querySelector('#form_page').append(form);
     document.querySelector('#form_entry').append(input);
     document.querySelector('#form_entry').append(submit);
+
+    // focus on form text input
     document.querySelector('#form_name').focus();
+
+    // disable/enable submit button depending on text input
+    document.querySelector('#form_submit').disabled = true;
+    document.querySelector('#form_name').onkeyup = () => {
+        if (document.querySelector('#form_name').value.length > 0) {
+            document.querySelector('#form_submit').disabled = false;
+        } else {
+            document.querySelector('#form_submit').disabled = true;
+        }
+    }
+
+    // add event listener to submit input
+    onSubmit();
 }
 
 // build the list page
@@ -172,6 +231,7 @@ function createList() {
             document.querySelector('#listing').append(li);
             document.querySelector(`#entry_${key}`).append(button);
         });
+
         // add event listeners to delete buttons
         onDelete();
     })
@@ -187,15 +247,6 @@ function createList() {
 // browser back button action
 window.onpopstate = (event) => {
     showPage(event.state.page);
-    colorMenu(event.state.page)
-}
-
-// set browser history state to current page or DEFAULT_PAGE
-const current_page = getPage();
-if (current_page === '') {
-    history.pushState({page: DEFAULT_PAGE}, "", DEFAULT_PAGE);
-} else {
-    history.pushState({page: current_page}, "", current_page);
 }
 
 ////////////////
@@ -203,11 +254,8 @@ if (current_page === '') {
 ////////////////
 
 document.addEventListener('DOMContentLoaded', () => {
-    // get csrf token
-    const csrftoken = getCookie('csrftoken');
-
-    hidePages();
-    showPage(history.state.page);
-    colorMenu(history.state.page);
     menuButtons();
+    setHistory();
+    showPage(history.state.page);
+    // colorMenu(history.state.page);
 })
