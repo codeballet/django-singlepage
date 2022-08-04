@@ -23,32 +23,6 @@ function colorMenu(id) {
     document.querySelector(`#${id}`).style.background = ACTIVE;
 }
 
-// add event listeners on delete buttons for list entries
-function deleteButtons() {
-    // get csrf token
-    const csrftoken = getCookie('csrftoken');
-
-    buttons = document.querySelectorAll('.list_button');
-    for (let i = 0; i < buttons.length; i++) {
-        buttons[i].onclick = function () {
-            fetch(`api/delete/${this.id}`, {
-                method: 'DELETE',
-                headers: {'X-CSRFToken': csrftoken},
-                mode: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(message => {
-                console.log(message)
-                // reload page with refreshed list
-                showPage('list');
-            })
-            .catch(error => {
-                console.log('Error: ', error);
-            });
-        }
-    }
-}
-
 // get csrf token from cookie
 function getCookie(name) {
     let cookieValue = null;
@@ -94,6 +68,32 @@ function menuButtons() {
     });
 }
 
+// add event listeners on delete buttons for list entries
+function onDelete() {
+    // get csrf token
+    const csrftoken = getCookie('csrftoken');
+
+    buttons = document.querySelectorAll('.list_button');
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].onclick = function () {
+            fetch(`api/delete/${this.id}`, {
+                method: 'DELETE',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(message => {
+                console.log(message)
+                // reload page with refreshed list
+                showPage('list');
+            })
+            .catch(error => {
+                console.log('Error: ', error);
+            });
+        }
+    }
+}
+
 // show the requested page
 function showPage(page) {
     hidePages();
@@ -129,16 +129,14 @@ function createForm() {
     input.name = 'entry';
     input.type = 'text';
     input.placeholder = 'Entry';
-    input.autofocus = true;
 
-    const button = document.createElement('button');
-    button.id = 'form_submit';
-    button.className = 'form_button';
-    button.innerHTML = 'Submit';
+    const submit = document.createElement('input');
+    submit.id = 'form_submit';
+    submit.type = 'submit';
 
     document.querySelector('#form_page').append(form);
     document.querySelector('#form_entry').append(input);
-    document.querySelector('#form_entry').append(button);
+    document.querySelector('#form_entry').append(submit);
     document.querySelector('#form_name').focus();
 }
 
@@ -175,7 +173,7 @@ function createList() {
             document.querySelector(`#entry_${key}`).append(button);
         });
         // add event listeners to delete buttons
-        deleteButtons();
+        onDelete();
     })
     .catch(error => {
         console.log("error :", error)
